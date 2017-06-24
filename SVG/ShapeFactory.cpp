@@ -4,11 +4,7 @@
 #include "Line.h"
 Shape* ShapeFactory::CreateShape(String type) const
 {
-	if (type=="")
-	{
-		return nullptr;
-	}
-	else if (type == "rect")
+	if (type == "rect")
 	{
 		return new Rectangle();
 	}
@@ -19,6 +15,6 @@ Shape* ShapeFactory::CreateShape(String type) const
 	else if (type == "line")
 	{
 		return new Line();
-
 	}
+	return nullptr;
 }

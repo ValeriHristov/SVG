@@ -26,7 +26,7 @@ public:
 	void SetY(int y);
 	void SetWidth(int width);
 	void SetHeight(int height);
-	void SetFill(const String& fill);
+	void SetFill(String& fill);
 	Point TopPoint()const override;
 	virtual Point BottomPoint()const override;
 	virtual Point LeftMostPoint()const override;

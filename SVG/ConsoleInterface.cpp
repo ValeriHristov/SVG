@@ -5,7 +5,7 @@
 #include "Line.h"
 #include <fstream>
 
-bool ContainedInRectangle(const Rectangle& rect,const Shape* shape)
+bool ContainedInRectangle(const Rectangle& rect, const Shape* shape)
 {
 	return rect.LeftMostPoint() <= shape->LeftMostPoint() &&
 		rect.LeftMostPoint() <= shape->BottomPoint() &&
@@ -62,7 +62,7 @@ Rectangle* CreateRectangle(std::vector<String> parameters)
 	int y = (int)parameters[3];
 	int width = (int)parameters[4];
 	int height = (int)parameters[5];
-	
+
 	String fill;
 	if (parameters.size() == 7)
 	{
@@ -128,6 +128,10 @@ void ConsoleInterface::Run()
 		{
 			this->Save();
 		}
+		else if (operation == "saveas")
+		{
+			this->SaveAs(parameters[1]);
+		}
 		else if (operation == "open")
 		{
 			if (parameters.size() != 2)
@@ -139,7 +143,7 @@ void ConsoleInterface::Run()
 		}
 		else if (operation == "within")
 		{
-			if (parameters.size()< 5)
+			if (parameters.size() < 5)
 			{
 				PrintInvalidInput();
 				return;
@@ -149,7 +153,13 @@ void ConsoleInterface::Run()
 		else if (operation == "exit")
 		{
 			std::cout << "Exit\n";
+			this->Clear();
 			return;
+		}
+		else if (operation == "close")
+		{
+			this->Clear();
+			std::cout << "Closed current file\n";
 		}
 		else
 		{
@@ -169,6 +179,7 @@ void ConsoleInterface::Open(String& fileName)
 		PrintInvalidInput();
 		return;
 	}
+	this->Clear();
 	this->currentFileName = fileName;
 	this->Read(str);
 	std::cout << "Successfully opened " << fileName << "\n";
@@ -206,7 +217,7 @@ void ConsoleInterface::Print()const
 {
 	for (int i = 0; i < this->shapes.size(); i++)
 	{
-		std::cout << i+1 << ". " << this->shapes[i]->ToString();
+		std::cout << i + 1 << ". " << this->shapes[i]->ToString();
 	}
 }
 
@@ -220,7 +231,7 @@ void ConsoleInterface::Create(std::vector<String> parameters)
 			PrintInvalidInput();
 			return;
 		}
-		
+
 		newShape = CreateRectangle(parameters);
 	}
 	else if (parameters[1] == "circle")
@@ -238,7 +249,7 @@ void ConsoleInterface::Create(std::vector<String> parameters)
 		{
 			PrintInvalidInput();
 			return;
-		}		
+		}
 		newShape = CreateLine(parameters);
 	}
 	else
@@ -258,8 +269,8 @@ void ConsoleInterface::Erase(int index)
 		std::cout << "There is no figure number " << index << "\n";
 		return;
 	}
-	Shape* figure = this->shapes[index-1];
-	this->shapes.erase(this->shapes.begin() + index-1);
+	Shape* figure = this->shapes[index - 1];
+	this->shapes.erase(this->shapes.begin() + index - 1);
 	std::cout << "Erased a " << figure->GetType() << " (" << index << ")\n";
 	delete figure;
 }
@@ -289,11 +300,20 @@ void ConsoleInterface::Translate(std::vector<String> parameters)
 
 void ConsoleInterface::Save()
 {
-	std::ofstream ofs;
-	char* file = this->currentFileName.ToCharArray();
-	ofs.open(file, std::ofstream::out, std::ofstream::trunc);
-	delete[] file;
+	this->SaveAs(this->currentFileName);
+}
 
+void ConsoleInterface::SaveAs(String filename)
+{
+	std::ofstream ofs;
+	char* file = filename.ToCharArray();
+	ofs.open(file, std::ofstream::out, std::ofstream::trunc);
+
+	if (!ofs.is_open())
+	{
+		PrintInvalidInput();
+		return;
+	}
 	ofs << this->XMLHeader << this->SVGOpenTag;
 
 	for (int i = 0; i < this->shapes.size(); i++)
@@ -303,7 +323,8 @@ void ConsoleInterface::Save()
 
 	ofs << this->SVGCloseTag;
 	ofs.close();
-	this->Clear();
+	std::cout << "Successfully saved to " << file << " \n";
+	delete[] file;
 }
 
 void ConsoleInterface::Clear()
@@ -319,7 +340,7 @@ void ConsoleInterface::Clear()
 void ConsoleInterface::Within(std::vector<String> params)
 {
 	std::vector<int> indexes;
-	if (params.size()==5)
+	if (params.size() == 5)
 	{
 		Circle* circle = CreateCircle(params);
 		for (int i = 0; i < this->shapes.size(); i++)
@@ -343,12 +364,12 @@ void ConsoleInterface::Within(std::vector<String> params)
 		}
 		delete rect;
 	}
-	else 
+	else
 	{
 		PrintInvalidInput();
 		return;
 	}
-	if (indexes.size()==0)
+	if (indexes.size() == 0)
 	{
 		std::cout << "No shapes are located within ";
 		for (int i = 1; i < params.size(); i++)
@@ -360,6 +381,6 @@ void ConsoleInterface::Within(std::vector<String> params)
 	}
 	for (int i = 0; i < indexes.size(); i++)
 	{
-		std::cout << i+1 << ". " << this->shapes[indexes[i]]->ToString();
+		std::cout << i + 1 << ". " << this->shapes[indexes[i]]->ToString();
 	}
 }

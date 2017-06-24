@@ -33,8 +33,12 @@ void Rectangle::SetHeight(int height)
 	}
 	this->height = height;
 }
-void Rectangle::SetFill(const String& fill)
+void Rectangle::SetFill(String& fill)
 {
+	if (fill == "")
+	{
+		fill = "none";
+	}
 	this->fill = fill;
 }
 String Rectangle::GetType() const

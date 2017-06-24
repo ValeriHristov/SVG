@@ -25,6 +25,10 @@ void Circle::SetR(int r)
 }
 void Circle::SetFill(String fill)
 {
+	if (fill == "")
+	{
+		fill = "none";
+	}
 	this->fill = fill;
 }
 void Circle::Serialize(std::ostream& os) const
