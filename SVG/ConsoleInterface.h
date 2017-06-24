@@ -17,6 +17,7 @@ private:
 	void Erase(int index);
 	void Translate(std::vector<String> parameters);
 	void Save();
+	void Within(std::vector<String> params);
 public:
 	void Run();
 };

@@ -92,3 +92,23 @@ String Line::ToString() const
 	result.AppendLine(this->strokeWidth);
 	return result;
 }
+
+Point Line::TopPoint()const
+{
+	return Point(x2, y2);
+}
+	  
+Point Line::BottomPoint()const
+{
+	return Point(x1,y1);
+}
+	  
+Point Line::LeftMostPoint()const
+{
+	return Point(x1,y1);
+}
+	  
+Point Line::RightMostPoint() const
+{
+	return Point(x2,y2);
+}

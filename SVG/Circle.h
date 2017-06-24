@@ -14,9 +14,16 @@ public:
 	void Translate(int dx, int dy) override;
 	String ToString() const override;
 	String GetType() const override;
+	int GetCx() const;
+	int GetCy() const;
+	int GetR() const;
 	void SetCx(int cx);
 	void SetCy(int cy);
 	void SetR(int r);
 	void SetFill(String fill);
 
+	Point TopPoint()const override;
+	virtual Point BottomPoint()const override;
+	virtual Point LeftMostPoint()const override;
+	virtual Point RightMostPoint()const override;
 };

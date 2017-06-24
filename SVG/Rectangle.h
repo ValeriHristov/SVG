@@ -8,15 +8,12 @@ private:
 	int y;
 	int width;
 	int height;
-	int rx;
-	int ry;
 	String fill;
 protected:
 	void DeserializeHelper(String attName, String attValue) override;
 public:
 	Rectangle();
-	Rectangle(int width, int height, int x = 0, int y = 0, int rx = 0, int ry = 0);
-
+	Rectangle(int width, int height, int x = 0, int y = 0);
 	void Translate(int dx, int dy);
 	void Serialize(std::ostream& os)const override;
 	String ToString() const override;
@@ -27,9 +24,11 @@ public:
 	int GetRy() const;
 	void SetX(int x);
 	void SetY(int y);
-	void SetRx(int rx);
-	void SetRy(int ry);
 	void SetWidth(int width);
 	void SetHeight(int height);
 	void SetFill(const String& fill);
+	Point TopPoint()const override;
+	virtual Point BottomPoint()const override;
+	virtual Point LeftMostPoint()const override;
+	virtual Point RightMostPoint()const override;
 };

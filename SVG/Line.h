@@ -21,4 +21,8 @@ public:
 	void SetY1(int);
 	void SetY2(int);
 	void SetStrokeWidth(int);
+	Point TopPoint()const override;
+	virtual Point BottomPoint()const override;
+	virtual Point LeftMostPoint()const override;
+	virtual Point RightMostPoint()const override;
 };

@@ -1,14 +1,12 @@
 #include "Rectangle.h"
 
-Rectangle::Rectangle() : x(0), y(0), width(0), height(0), rx(0), ry(0){}
+Rectangle::Rectangle() : x(0), y(0), width(0), height(0){}
 
-Rectangle::Rectangle(int width, int height, int x, int y, int rx, int ry)
+Rectangle::Rectangle(int width, int height, int x, int y)
 	: x(x), y(y)
 {
 	this->SetWidth(width);
 	this->SetHeight(height);
-	this->SetRx(rx);
-	this->SetRy(ry);
 }
 
 void Rectangle::SetX(int x)
@@ -18,22 +16,6 @@ void Rectangle::SetX(int x)
 void Rectangle::SetY(int y)
 {
 	this->y = y;
-}
-void Rectangle::SetRx(int rx)
-{
-	if (rx < 0)
-	{
-		rx = 0;
-	}
-	this->rx = rx;
-}
-void Rectangle::SetRy(int ry)
-{
-	if (ry < 0)
-	{
-		ry = 0;
-	}
-	this->ry = ry;
 }
 void Rectangle::SetWidth(int width)
 {
@@ -66,8 +48,6 @@ void Rectangle::Serialize(std::ostream& os) const
 	this->SerializeAttribute(os, "y", y);
 	this->SerializeAttribute(os, "width", width);
 	this->SerializeAttribute(os, "height", height);
-	this->SerializeAttribute(os, "rx", rx);
-	this->SerializeAttribute(os, "ry", ry);
 	this->SerializeAttribute(os, "fill", fill);
 	this->EndSerialize(os);
 }
@@ -83,7 +63,7 @@ void Rectangle::DeserializeHelper(String attName, String attValue)
 	{
 		this->SetX((int)attValue);
 	}
-	else if(attName == "y")
+	else if (attName == "y")
 	{
 		this->SetY((int)attValue);
 	}
@@ -95,18 +75,10 @@ void Rectangle::DeserializeHelper(String attName, String attValue)
 	{
 		this->SetHeight((int)attValue);
 	}
-	else if (attName == "rx")
-	{
-		this->SetRx((int)attValue);
-	}
-	else if (attName == "ry")
-	{
-		this->SetRy((int)attValue);
-	}
 	else if (attName == "fill")
 	{
 		this->SetFill(attValue);
-	}	 
+	}
 }
 
 String Rectangle::ToString() const
@@ -122,11 +94,27 @@ String Rectangle::ToString() const
 	result.Append(" ");
 	result.Append(this->height);
 	result.Append(" ");
-	result.Append(this->rx);
-	result.Append(" ");
-	result.Append(this->ry);
-	result.Append(" ");
 	result.AppendLine(this->fill);
 	return result;
+}
 
+//Left top corner
+Point Rectangle::TopPoint()const
+{
+	return Point(x,y+height);
+}
+//Right bottom corner
+Point Rectangle::BottomPoint()const
+{
+	return Point(x+width,y);
+}
+//Left bottom corner
+Point Rectangle::LeftMostPoint()const
+{
+	return Point(x,y);
+}
+//Right top corner
+Point Rectangle::RightMostPoint() const
+{
+	return Point(x+width,y+height);
 }

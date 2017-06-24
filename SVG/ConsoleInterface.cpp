@@ -5,6 +5,74 @@
 #include "Line.h"
 #include <fstream>
 
+bool ContainedInRectangle(const Rectangle& rect,const Shape* shape)
+{
+	return rect.LeftMostPoint() <= shape->LeftMostPoint() &&
+		rect.LeftMostPoint() <= shape->BottomPoint() &&
+		rect.RightMostPoint() >= shape->RightMostPoint() &&
+		rect.RightMostPoint() >= shape->TopPoint();
+}
+
+bool ContainedInCircle(const Circle& circle, const Shape* shape)
+{
+	Point centre(circle.GetCx(), circle.GetCy());
+	int r = circle.GetR();
+	bool contained = true;
+	if (centre.GetDistanceTo(shape->BottomPoint()) > r ||
+		centre.GetDistanceTo(shape->LeftMostPoint()) > r ||
+		centre.GetDistanceTo(shape->RightMostPoint()) > r ||
+		centre.GetDistanceTo(shape->TopPoint()) > r)
+	{
+		contained = false;
+	}
+	return contained;
+}
+
+Circle* CreateCircle(std::vector<String> parameters)
+{
+	int cx = (int)parameters[2];
+	int cy = (int)parameters[3];
+	int r = (int)parameters[4];
+
+	String fill;
+	if (parameters.size() > 5)
+	{
+		fill = parameters[5];
+	}
+	Circle* circle = new Circle(cx, cy, r);
+	circle->SetFill(fill);
+	return circle;
+}
+
+Line* CreateLine(std::vector<String> parameters)
+{
+	int x1 = (int)parameters[2];
+	int y1 = (int)parameters[3];
+	int x2 = (int)parameters[4];
+	int y2 = (int)parameters[5];
+	int strokeWidth = (int)parameters[6];
+	Line* line = new Line(x1, y1, x2, y2);
+	line->SetStrokeWidth(strokeWidth);
+	return line;
+}
+
+Rectangle* CreateRectangle(std::vector<String> parameters)
+{
+	int x = (int)parameters[2];
+	int y = (int)parameters[3];
+	int width = (int)parameters[4];
+	int height = (int)parameters[5];
+	
+	String fill;
+	if (parameters.size() == 7)
+	{
+		fill = parameters[6];
+	}
+	Rectangle* rect = new Rectangle(width, height, x, y);
+	rect->SetFill(fill);
+	return rect;
+}
+
 void PrintInvalidInput()
 {
 	std::cout << "Invalid input!\n";
@@ -29,6 +97,65 @@ String GetNextTagName(std::istream& is)
 		c = is.get();
 	}
 	return s;
+}
+
+void ConsoleInterface::Run()
+{
+	String input;
+	while (true)
+	{
+		std::cout << "> ";
+		std::cin >> input;
+		auto parameters = input.Split();
+		String operation = parameters[0];
+		if (operation == "print")
+		{
+			this->Print();
+		}
+		else if (operation == "create")
+		{
+			this->Create(parameters);
+		}
+		else if (operation == "erase")
+		{
+			this->Erase((int)parameters[1]);
+		}
+		else if (operation == "translate")
+		{
+			this->Translate(parameters);
+		}
+		else if (operation == "save")
+		{
+			this->Save();
+		}
+		else if (operation == "open")
+		{
+			if (parameters.size() != 2)
+			{
+				PrintInvalidInput();
+				return;
+			}
+			this->Open(parameters[1]);
+		}
+		else if (operation == "within")
+		{
+			if (parameters.size()< 5)
+			{
+				PrintInvalidInput();
+				return;
+			}
+			this->Within(parameters);
+		}
+		else if (operation == "exit")
+		{
+			std::cout << "Exit\n";
+			return;
+		}
+		else
+		{
+			PrintInvalidInput();
+		}
+	}
 }
 
 void ConsoleInterface::Open(String& fileName)
@@ -75,64 +202,11 @@ void ConsoleInterface::Read(std::istream& is)
 	}
 }
 
-void ConsoleInterface::Run()
-{
-	String input;
-	while (true)
-	{
-		std::cout << "> ";
-		std::cin >> input;
-		auto parameters = input.Split();
-		String operation = parameters[0];
-		if (operation == "print")
-		{
-			this->Print();
-		}
-		else if (operation == "create")
-		{
-			this->Create(parameters);
-		}
-		else if (operation == "erase")
-		{
-			this->Erase((int)parameters[1]);
-		}
-		else if (operation == "translate")
-		{
-			this->Translate(parameters);
-		}
-		else if (operation == "save")
-		{
-			this->Save();
-		}
-		else if (operation == "open")
-		{
-			if (parameters.size() != 2)
-			{
-				PrintInvalidInput();
-			}
-			this->Open(parameters[1]);
-		}
-		else if (operation == "within")
-		{
-
-		}
-		else if (operation == "exit")
-		{
-			std::cout << "Exit\n";
-			return;
-		}
-		else
-		{
-			PrintInvalidInput();
-		}
-	}
-}
-
 void ConsoleInterface::Print()const
 {
 	for (int i = 0; i < this->shapes.size(); i++)
 	{
-		std::cout << i << ". " << this->shapes[i]->ToString();
+		std::cout << i+1 << ". " << this->shapes[i]->ToString();
 	}
 }
 
@@ -146,25 +220,8 @@ void ConsoleInterface::Create(std::vector<String> parameters)
 			PrintInvalidInput();
 			return;
 		}
-		int x = (int)parameters[2];
-		int y = (int)parameters[3];
-		int width = (int)parameters[4];
-		int height = (int)parameters[5];
-		int rx = 0;
-		int ry = 0;
-		if (parameters.size() > 7)
-		{
-			rx = (int)parameters[6];
-			ry = (int)parameters[7];
-		}
-		String fill;
-		if (parameters.size() == 9)
-		{
-			fill = parameters[8];
-		}
-		Rectangle* rect = new Rectangle(width, height, x, y, rx, ry);
-		rect->SetFill(fill);
-		newShape = rect;
+		
+		newShape = CreateRectangle(parameters);
 	}
 	else if (parameters[1] == "circle")
 	{
@@ -173,18 +230,7 @@ void ConsoleInterface::Create(std::vector<String> parameters)
 			PrintInvalidInput();
 			return;
 		}
-		int cx = (int)parameters[2];
-		int cy = (int)parameters[3];
-		int r = (int)parameters[4];
-
-		String fill;
-		if (parameters.size() > 5)
-		{
-			fill = parameters[5];
-		} 
-		Circle* circle = new Circle(cx, cy, r);
-		circle->SetFill(fill);
-		newShape = circle;
+		newShape = CreateCircle(parameters);
 	}
 	else if (parameters[1] == "line")
 	{
@@ -192,15 +238,8 @@ void ConsoleInterface::Create(std::vector<String> parameters)
 		{
 			PrintInvalidInput();
 			return;
-		}
-		int x1 = (int)parameters[2];
-		int y1 = (int)parameters[3];
-		int x2 = (int)parameters[4];
-		int y2 = (int)parameters[5];
-		int strokeWidth = (int)parameters[6];
-		Line* line = new Line(x1, y1, x2, y2);
-		line->SetStrokeWidth(strokeWidth);
-		newShape = line;
+		}		
+		newShape = CreateLine(parameters);
 	}
 	else
 	{
@@ -210,7 +249,6 @@ void ConsoleInterface::Create(std::vector<String> parameters)
 
 	this->shapes.push_back(newShape);
 	std::cout << "Successfully created " << newShape->GetType() << " " << this->shapes.size() << "\n";
-
 }
 
 void ConsoleInterface::Erase(int index)
@@ -220,8 +258,8 @@ void ConsoleInterface::Erase(int index)
 		std::cout << "There is no figure number " << index << "\n";
 		return;
 	}
-	Shape* figure = this->shapes[index];
-	this->shapes.erase(this->shapes.begin() + index);
+	Shape* figure = this->shapes[index-1];
+	this->shapes.erase(this->shapes.begin() + index-1);
 	std::cout << "Erased a " << figure->GetType() << " (" << index << ")\n";
 	delete figure;
 }
@@ -276,4 +314,52 @@ void ConsoleInterface::Clear()
 		delete this->shapes[i];
 	}
 	this->shapes.clear();
+}
+
+void ConsoleInterface::Within(std::vector<String> params)
+{
+	std::vector<int> indexes;
+	if (params.size()==5)
+	{
+		Circle* circle = CreateCircle(params);
+		for (int i = 0; i < this->shapes.size(); i++)
+		{
+			if (ContainedInCircle(*circle, this->shapes[i]))
+			{
+				indexes.push_back(i);
+			}
+		}
+		delete circle;
+	}
+	else if (params.size() == 6)
+	{
+		Rectangle* rect = CreateRectangle(params);
+		for (int i = 0; i < this->shapes.size(); i++)
+		{
+			if (ContainedInRectangle(*rect, this->shapes[i]))
+			{
+				indexes.push_back(i);
+			}
+		}
+		delete rect;
+	}
+	else 
+	{
+		PrintInvalidInput();
+		return;
+	}
+	if (indexes.size()==0)
+	{
+		std::cout << "No shapes are located within ";
+		for (int i = 1; i < params.size(); i++)
+		{
+			std::cout << params[i] << " ";
+		}
+		std::cout << "\n";
+		return;
+	}
+	for (int i = 0; i < indexes.size(); i++)
+	{
+		std::cout << i+1 << ". " << this->shapes[indexes[i]]->ToString();
+	}
 }

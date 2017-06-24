@@ -78,3 +78,36 @@ String Circle::ToString() const
 	result.AppendLine(this->fill);
 	return result;
 }
+
+int Circle::GetCx() const
+{
+	return this->cx;
+}
+int Circle::GetCy() const
+{
+	return this->cy;
+}
+int Circle::GetR() const
+{
+	return this->r;
+}
+
+Point Circle::TopPoint()const
+{
+	return Point(cx, cy + r);
+}
+
+Point Circle::BottomPoint()const
+{
+	return Point(cx, cy - r);
+}
+
+Point Circle::LeftMostPoint()const
+{
+	return Point(cx - r, cy);
+}
+
+Point Circle::RightMostPoint() const
+{
+	return Point(cx + r, cy);
+}
