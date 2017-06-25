@@ -101,6 +101,7 @@ String GetNextTagName(std::istream& is)
 
 void ConsoleInterface::Run()
 {
+	this->PrintWelcome();
 	String input;
 	while (true)
 	{
@@ -160,6 +161,10 @@ void ConsoleInterface::Run()
 		{
 			this->Clear();
 			std::cout << "Closed current file\n";
+		}
+		else if (operation == "?")
+		{
+			this->PrintHelp();
 		}
 		else
 		{
@@ -383,4 +388,26 @@ void ConsoleInterface::Within(std::vector<String> params)
 	{
 		std::cout << i + 1 << ". " << this->shapes[indexes[i]]->ToString();
 	}
+}
+
+void ConsoleInterface::PrintHelp()
+{
+	std::cout << "Commands available:\n";
+	std::cout << "- print\n";
+	std::cout << "- create <rectangle/circle/line> <params>\n";
+	std::cout << "- erase <index>\n";
+	std::cout << "- translate vertical=<value> horizontal=<value> {<index>}\n";
+	std::cout << "- within <rectangle/circle> <params>\n";
+	std::cout << "- save\n";
+	std::cout << "- saveas <filename>\n";
+	std::cout << "- open <filename>\n";
+	std::cout << "- close\n";
+	std::cout << "- exit\n";
+	std::cout << "For more details, read the Readme file!\n";
+}
+
+void ConsoleInterface::PrintWelcome()
+{
+	String message = "Welcome to the SVG files manager!\nFor now, tha manager supports rectangle, circle and line.\nIf you need help, type '?'\n";
+	std::cout << message;
 }

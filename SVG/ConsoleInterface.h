@@ -20,7 +20,8 @@ private:
 	void SaveAs(String filename);
 	void Close();
 	void Within(std::vector<String> params);
-
+	void PrintHelp();
+	void PrintWelcome();
 public:
 	void Run();
 	
