@@ -155,7 +155,7 @@ void ConsoleInterface::Run()
 		{
 			std::cout << "Exit\n";
 			this->Clear();
-			continue;
+			return;
 		}
 		else if (operation == "close")
 		{
