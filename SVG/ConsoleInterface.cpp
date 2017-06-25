@@ -138,7 +138,7 @@ void ConsoleInterface::Run()
 			if (parameters.size() != 2)
 			{
 				PrintInvalidInput();
-				return;
+				continue;
 			}
 			this->Open(parameters[1]);
 		}
@@ -147,7 +147,7 @@ void ConsoleInterface::Run()
 			if (parameters.size() < 5)
 			{
 				PrintInvalidInput();
-				return;
+				continue;
 			}
 			this->Within(parameters);
 		}
@@ -155,10 +155,15 @@ void ConsoleInterface::Run()
 		{
 			std::cout << "Exit\n";
 			this->Clear();
-			return;
+			continue;
 		}
 		else if (operation == "close")
 		{
+			if (this->currentFileName == "")
+			{
+				std::cout << "There is no opened file!\n";
+				continue;
+			}
 			this->Clear();
 			std::cout << "Closed current file\n";
 		}
@@ -305,6 +310,11 @@ void ConsoleInterface::Translate(std::vector<String> parameters)
 
 void ConsoleInterface::Save()
 {
+	if (this->currentFileName == "")
+	{
+		std::cout << "There is no opened file!\n";
+		return;
+	}
 	this->SaveAs(this->currentFileName);
 }
 
