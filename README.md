@@ -15,14 +15,20 @@
  
 Когато записвате фигурите във файл, трябва да генерирате валиден SVG файл
 
-Операции : 
+Operations available:
 
-Print -Извежда на екрана всички фигури.
-
-Create-Създава нова фигура.
-
-Erase-Изтрива фигура
-
-Translate-Транслира една или всички фигури. Ако потребителят не посочи конкретна фигура, тогава се транслират всички фигури; ако се посочи конкретна – променя се само тя.
-
-Within-Извежда на екрана всички фигури, които изцяло се съдържат в даден регион. Потребителят може да укаже какъв да бъде регионът – кръг или правоъгълник
+- print - Prints all figures on the console.
+- create \<rectangle/circle/line> \<params> - Creates the wanted figure. Parameters vary depending on the figure:
+   - rectangle \<x> \<y> \<width> \<height> {\<fill>}
+   - circle \<cx> \<cy> \<r> {\<fill>}
+   - line \<x1> \<y1> \<x2> \<y2> \<stroke-width>
+- erase \<index> - Erases the figure with the given index.
+- translate vertical=\<value> horizontal=\<value> {\<index>} - Translates with the given values. If a figure index is not specified, all figures are translated.
+- within \<rectangle/circle> \<params> - Prints all figures, located entirely in the given figure. The parameters are the same as when creating a figure 
+   - rectangle \<x> \<y> \<width> \<height> 
+   - circle \<cx> \<cy> \<r>
+- save - Saves the changes to the opened file.
+- saveas \<filename> - Saves the current figures loaded in the wanted file.
+- open \<filename> - Openes the wanted file and loads all recognized figures from it.
+- close - Closes the current file open without saving the changes and removes all loaded figures.
+- exit - Closes the program without saving changes to files.
